@@ -1,0 +1,33 @@
+{% extends 'authentification/base.html' %}
+
+{% block content %}
+
+    <div class="auth-container">
+        <h1>LITRevu</h1>
+        <h2>Connectez-vous</h2>
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div>
+                <label for="username">Nom d'utilisateur :</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Se connecter</button>
+        </form>
+        <h2>Inscrivez-vous maintenant</h2>
+        <a href='subscribe/'>S'inscrire</a>
+    </div>
+
+    <div class="user-info">
+        <h2>Utilisateur existants :</h2>
+            <ul>
+            {% for user in users %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+            </ul>
+    </div>
+
+{% endblock %}
