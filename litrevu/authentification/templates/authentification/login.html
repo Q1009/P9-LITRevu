@@ -5,20 +5,13 @@
     <div class="auth-container">
         <h1>LITRevu</h1>
         <h2>Connectez-vous</h2>
-        <form action="{% url 'login' %}" method="post">
+        <form action="" method="post" novalidate>
             {% csrf_token %}
-            <div>
-                <label for="username">Nom d'utilisateur :</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div>
-                <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="password" required>
-            </div>
+            {{ user_form.as_p }}
             <button type="submit">Se connecter</button>
         </form>
         <h2>Inscrivez-vous maintenant</h2>
-        <a href='subscribe/'>S'inscrire</a>
+        <a href="{% url 'subscribe' %}">S'inscrire</a>
     </div>
 
     <div class="user-info">

@@ -19,7 +19,7 @@ from django.urls import path
 from authentification import views as auth_views
 from flux import views as flux_views
 from subscriptions import views as subs_views
-from tickets import views as tickets_views
+from posts import views as posts_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,5 +28,5 @@ urlpatterns = [
     path('about/', auth_views.about_view, name='about'),
     path('flux/', flux_views.flux_view, name='flux'),
     path('subscriptions/', subs_views.subscriptions_view, name='subscriptions'),
-    path('tickets/', tickets_views.tickets_view, name='tickets'),
+    path('posts/', posts_views.posts_view, name='posts'),
 ]

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'authentification',
     'flux',
     'subscriptions',
-    'tickets',
+    'posts',
 ]
 
 MIDDLEWARE = [
