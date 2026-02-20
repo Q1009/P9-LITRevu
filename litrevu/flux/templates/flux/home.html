@@ -3,4 +3,13 @@
 {% block content %}
     <h2>Flux</h2>
     <p>Welcome to the Flux page! Here you can see the latest posts from your friends.</p>
+    {% for ticket in tickets %}
+        <div class="ticket">
+            <h3>{{ ticket.title }}</h3>
+            <p>{{ ticket.description }}</p>
+            {% if ticket.image %}
+                <img src="{{ ticket.image.url }}" alt="Ticket Image" />
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endblock %}
