@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Abonnements</h2>
+    <ul>
+        {% for abonnement in abonnements %}
+            <li>{{ abonnement.content }} - {{ abonnement.author.username }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
