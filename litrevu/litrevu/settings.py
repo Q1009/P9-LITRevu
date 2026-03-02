@@ -132,6 +132,6 @@ LOGIN_URL = 'authentication:login'
 LOGIN_REDIRECT_URL = 'flux:home'
 
 # Media files (for user-uploaded content)
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 
-MEDIA_ROOT = BASE_DIR.joinpath('media')
+MEDIA_ROOT = BASE_DIR / 'media'
