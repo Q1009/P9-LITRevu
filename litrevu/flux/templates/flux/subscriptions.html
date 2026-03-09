@@ -1,10 +1,26 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h1>Gérer les abonnements</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Suivre</button>
+    </form>
     <h2>Abonnements</h2>
     <ul>
-        {% for abonnement in abonnements %}
-            <li>{{ abonnement.content }} - {{ abonnement.author.username }}</li>
+        {% for user_followed in users_followed %}
+            <li>{{ user_followed.username }}</li>
+            <form method="post" action="{% url 'flux:unsubscribe' user_followed.id %}">
+                {% csrf_token %}
+                <button type="submit">Se désabonner</button>
+            </form>
+        {% endfor %}
+    </ul>
+    <h2>Abonnés</h2>
+    <ul>
+        {% for follower in users_following %}
+            <li>{{ follower.username }}</li>
         {% endfor %}
     </ul>
 {% endblock %}
