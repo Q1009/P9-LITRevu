@@ -7,14 +7,24 @@ from authentication import models as auth_models
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from itertools import chain
 
 # Create your views here.
 class HomePage(LoginRequiredMixin, View):
     template_name = 'flux/home.html'
 
     def get(self, request):
-        tickets = models.Ticket.objects.all()
-        return render(request, self.template_name, context={'tickets': tickets})
+        users_followed = auth_models.User.objects.filter(followed_by__user=request.user)
+        tickets = models.Ticket.objects.filter(author__in=users_followed)
+        reviews = models.Review.objects.filter(ticket__in=tickets)
+        #Il faut bloquer les reviews aux tickets si un utilisateur à déjà posté une review en réponse
+        #Existe-t-il un moyen de faire une requête qui récupère les tickets et les reviews associées, triées par date de création côté base de données ? (pour éviter de faire le tri en Python avec sorted et chain)
+        tickets_and_reviews = sorted(
+            chain(tickets, reviews),
+            key=lambda instance: instance.date_created if isinstance(instance, models.Ticket) else instance.time_created,
+            reverse=True
+        )
+        return render(request, self.template_name, context={'tickets_and_reviews': tickets_and_reviews})
     
 class PostsPage(LoginRequiredMixin, View):
     template_name = 'flux/posts.html'
@@ -126,3 +136,63 @@ class SubscriptionDeleteView(LoginRequiredMixin, View):
         subscription = get_object_or_404(models.UserFollows, user=request.user, user_followed=user_followed)
         subscription.delete()
         return redirect('flux:subscriptions')
+    
+class CreateReviewPage(LoginRequiredMixin, View):
+    template_name = 'flux/create_review.html'
+    review_form_class = forms.ReviewForm
+    ticket_form_class = forms.TicketForm
+
+    def get(self, request):
+        review_form = self.review_form_class()
+        ticket_form = self.ticket_form_class()
+        context = {
+            'review_form': review_form,
+            'ticket_form': ticket_form,
+        }
+        return render(request, self.template_name, context=context)
+    
+    def post(self, request):
+        review_form = self.review_form_class(request.POST)
+        ticket_form = self.ticket_form_class(request.POST, request.FILES)
+        if review_form.is_valid() and ticket_form.is_valid():
+            ticket = ticket_form.save(commit=False)
+            ticket.author = request.user
+            ticket.save()
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.ticket = ticket
+            review.save()
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        context = {
+            'review_form': review_form,
+            'ticket_form': ticket_form,
+        }
+        return render(request, self.template_name, context=context)
+    
+class CreateReviewForTicketPage(LoginRequiredMixin, View):
+    template_name = 'flux/create_review_for_ticket.html'
+    review_form_class = forms.ReviewForm
+
+    def get(self, request, ticket_id):
+        ticket = get_object_or_404(models.Ticket, id=ticket_id)
+        review_form = self.review_form_class()
+        context = {
+            'form': review_form,
+            'ticket': ticket,
+        }
+        return render(request, self.template_name, context=context)
+    
+    def post(self, request, ticket_id):
+        ticket = get_object_or_404(models.Ticket, id=ticket_id)
+        review_form = self.review_form_class(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.ticket = ticket
+            review.save()
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        context = {
+            'form': review_form,
+            'ticket': ticket,
+        }
+        return render(request, self.template_name, context=context)

@@ -1,5 +1,5 @@
 from django import forms
-from flux.models import Ticket
+from flux.models import Ticket, Review
 from django.contrib.auth import get_user_model
 
 class TicketForm(forms.ModelForm):
@@ -13,3 +13,10 @@ class DeleteTicketForm(forms.Form):
 
 class FollowUsersForm(forms.Form):
     user_to_follow = forms.CharField(label="Nom d'utilisateur", max_length=55)
+
+class ReviewForm(forms.ModelForm):
+    RATING_CHOICES = [(i, str(i)) for i in range(6)]
+    rating = forms.ChoiceField(choices=RATING_CHOICES, widget=forms.RadioSelect, label="Note")
+    class Meta:
+        model = Review
+        fields = ['headline', 'rating', 'body']

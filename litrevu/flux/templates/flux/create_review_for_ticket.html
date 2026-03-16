@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Créer une critique</h2>
+    {% if form.errors %}
+        {{ form.errors }}
+        <p style="color: red;">Please correct the errors below.</p>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>Vous êtes en train de poster en réponse à</h3>
+        <div class="ticket">
+            <p>{{ ticket.author.username }} a demandé une critique</p>
+            <h3>{{ ticket.title }}</h3>
+            <p>{{ ticket.description }}</p>
+            {% if ticket.image %}
+                <img src="{{ ticket.image.url }}" alt="Ticket Image" />
+            {% endif %}
+        <h3>Critique</h3>
+        {{ form.as_p }}
+        <button type="submit">Envoyer</button>
+    </form>
+{% endblock %}
