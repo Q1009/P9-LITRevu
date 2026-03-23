@@ -1,25 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Modifier un ticket</h2>
+    <h2>Modifier votre ticket</h2>
     {% if edit_form.errors %}
         {{ edit_form.errors }}
         <p style="color: red;">Please correct the errors below.</p>
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ edit_form.as_p }}
-        <button type="submit">Sauvegarder</button>
+        {%for field in edit_form %}
+            <div>
+            {%if field.name == 'title'%}
+                <label for="title">Titre</label>
+                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value }}">
+            {% endif %}
+            </div>
+            <div>
+            {%if field.name == 'description'%}
+                <label for="description">Description</label>
+                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}">{{ field.value }}</textarea>
+            {% endif %}
+            </div>
+             {% if field.name == 'image' and not field.value %}
+                <label for="image">Image</label>
+                <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}">
+            {% endif %}
+            {% if field.name == 'image' and field.value %}
+                <img src="{{ field.value.url }}" alt="Current Image" style="max-width: 200px;"/>
+                <!-- Modifier le style du label en bouton -->
+                <label for="image" class="btn">Télécharger fichier</label>
+                <input type="file" name="{{ field.name }}" id="image" style="display: none;">
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Envoyer</button>
     </form>
-    <h3>Supprimer ce ticket</h3>
-    {% if delete_form.errors %}
-        {{ delete_form.errors }}
-        <p style="color: red;">Please correct the errors below.</p>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        {{ delete_form.as_p }}
-        <button type="submit">Supprimer</button>
-    </form>
-    <a href="{% url 'flux:home' %}">Retourner</a>
 {% endblock %}

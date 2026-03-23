@@ -1,26 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Gérer les abonnements</h1>
+    <h2>Suivre d'autres utilisateurs</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Suivre</button>
+        {% if form.user_to_follow.errors %}
+            {{ form.user_to_follow.errors }}
+        {% endif %}
+        <div class="input-row">
+            {{ form.user_to_follow }}
+            <button type="submit">Suivre</button>
+        </div>
     </form>
     <h2>Abonnements</h2>
     <ul>
         {% for user_followed in users_followed %}
-            <li>{{ user_followed.username }}</li>
-            <form method="post" action="{% url 'flux:unsubscribe' user_followed.id %}">
-                {% csrf_token %}
-                <button type="submit">Se désabonner</button>
-            </form>
+            <li class="subscription-item">
+                <span>{{ user_followed.username }}</span>
+                <form method="post" action="{% url 'flux:unsubscribe' user_followed.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Se désabonner</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
     <h2>Abonnés</h2>
     <ul>
         {% for follower in users_following %}
-            <li>{{ follower.username }}</li>
+            <li class="subscription-item">
+                <span>{{ follower.username }}</span>
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

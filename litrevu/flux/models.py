@@ -6,7 +6,7 @@ from django.conf import settings
 class Ticket(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=8192)
-    image = models.ImageField() # mettre un nom unique de fichier image + dispatcher signal pour supprimer l'image dans le dossier media quand le ticket est supprimé
+    image = models.ImageField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=False, null=True, blank=True)

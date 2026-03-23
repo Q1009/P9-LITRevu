@@ -30,7 +30,14 @@ class PostsPage(LoginRequiredMixin, View):
     template_name = 'flux/posts.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        tickets = models.Ticket.objects.filter(author=request.user)
+        reviews = models.Review.objects.filter(user=request.user)
+        tickets_and_reviews = sorted(
+            chain(tickets, reviews),
+            key=lambda instance: instance.date_created if isinstance(instance, models.Ticket) else instance.time_created,
+            reverse=True
+        )
+        return render(request, self.template_name, context={'tickets_and_reviews': tickets_and_reviews})
     
 class SubscriptionsPage(LoginRequiredMixin, View):
     template_name = 'flux/subscriptions.html'
@@ -130,7 +137,17 @@ class EditTicketPage(LoginRequiredMixin, View):
         }
         return render(request, self.template_name, context=context)
     
+class TicketDeleteView(LoginRequiredMixin, View):
+
+    def post(self, request, ticket_id):
+        ticket = get_object_or_404(models.Ticket, id=ticket_id)
+        if ticket.author != request.user:
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        ticket.delete()
+        return redirect('flux:posts')
+    
 class SubscriptionDeleteView(LoginRequiredMixin, View):
+
     def post(self, request, user_followed_id):
         user_followed = get_object_or_404(auth_models.User, id=user_followed_id)
         subscription = get_object_or_404(models.UserFollows, user=request.user, user_followed=user_followed)
@@ -194,5 +211,37 @@ class CreateReviewForTicketPage(LoginRequiredMixin, View):
         context = {
             'form': review_form,
             'ticket': ticket,
+        }
+        return render(request, self.template_name, context=context)
+    
+class ReviewDeleteView(LoginRequiredMixin, View):
+
+    def post(self, request, review_id):
+        review = get_object_or_404(models.Review, id=review_id)
+        review.delete()
+        return redirect('flux:posts')
+    
+class EditReviewPage(LoginRequiredMixin, View):
+    template_name = 'flux/edit_review.html'
+    form_class = forms.ReviewForm
+
+    def get(self, request, review_id):
+        review = get_object_or_404(models.Review, id=review_id)
+        form = self.form_class(instance=review)
+        context = {
+            'form': form,
+            'review': review,
+        }
+        return render(request, self.template_name, context=context)
+    
+    def post(self, request, review_id):
+        review = get_object_or_404(models.Review, id=review_id)
+        form = self.form_class(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        context = {
+            'form': form,
+            'review': review,
         }
         return render(request, self.template_name, context=context)

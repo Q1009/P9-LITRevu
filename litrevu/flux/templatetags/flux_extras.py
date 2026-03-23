@@ -11,3 +11,7 @@ def get_user_display(context, user):
     if context['user'] == user:
         return 'vous'
     return user.username
+
+@register.filter
+def rating_stars(value):
+    return '★' * value + '☆' * (5 - value)

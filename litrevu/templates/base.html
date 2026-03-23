@@ -10,15 +10,18 @@
     <body>
         {% if user.is_authenticated %}
         <nav>
-            <a href="{% url 'flux:home' %}">Flux</a>
-            <a href="{% url 'flux:posts' %}">Posts</a>
-            <a href="{% url 'flux:subscriptions' %}">Abonnements</a>
-            <a href="{% url 'authentication:logout' %}">Se déconnecter</a>
+            <a href="{% url 'flux:home' %}" class="nav-brand">LITRevu</a>
+            <div class="nav-links">
+                <a href="{% url 'flux:home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Flux</a>
+                <a href="{% url 'flux:posts' %}" {% if request.resolver_match.url_name == 'posts' %}class="active"{% endif %}>Posts</a>
+                <a href="{% url 'flux:subscriptions' %}" {% if request.resolver_match.url_name == 'subscriptions' %}class="active"{% endif %}>Abonnements</a>
+                <a href="{% url 'authentication:logout' %}">Se déconnecter</a>
+            </div>
         </nav>
         {% endif %}
-
-        <h1>LITRevu</h1>
-        {% block content %}
-        {% endblock %}
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
     </body>
 </html>

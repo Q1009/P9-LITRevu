@@ -1,10 +1,51 @@
 {% extends 'base.html' %}
+{% load flux_extras %}
 
 {% block content %}
-    <h2>Posts</h2>
-    <ul>
-        {% for post in posts %}
-            <li>{{ post.content }} - {{ post.author.username }}</li>
-        {% endfor %}
-    </ul>
+    {% for ticket_and_review in tickets_and_reviews %}
+        {% if ticket_and_review|model_type == 'Ticket' %}
+                <div class="ticket">
+                    <h3>Vous avez publié un ticket</h3>
+                    <h4 class="date">{{ ticket_and_review.date_created }}</h4>
+                    <h3>{{ ticket_and_review.title }}</h3>
+                    <p>{{ ticket_and_review.description }}</p>
+                    {% if ticket_and_review.image %}
+                        <img src="{{ ticket_and_review.image.url }}" alt="Ticket Image" />
+                    {% endif %}
+                    {% if ticket_and_review.time_edited %}
+                        <p>Edited on {{ ticket_and_review.time_edited }}</p>
+                    {% endif %}
+                    <div class="card-actions">
+                        <a href="{% url 'flux:edit_ticket' ticket_and_review.id %}" class="btn">Modifier</a>
+                        <form method="post" action="{% url 'flux:delete_ticket' ticket_and_review.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+        {% elif ticket_and_review|model_type == 'Review' %}
+            <div class="review">
+                <h3>Vous avez publié une critique</h3>
+                <h4 class="date">{{ ticket_and_review.time_created }}</h4>
+                <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
+                <p>{{ ticket_and_review.body }}</p>
+                <div class="ticket_of_review">
+                    <h3>Ticket - {{ticket_and_review.ticket.author.username}}</h3>
+                    <h4 class="date">{{ ticket_and_review.ticket.date_created }}</h4>
+                    <h3>{{ ticket_and_review.ticket.title }}</h3>
+                    <p>{{ ticket_and_review.ticket.description }}</p>
+                    {% if ticket_and_review.ticket.image %}
+                        <img src="{{ ticket_and_review.ticket.image.url }}" alt="Ticket Image" />
+                    {% endif %}
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'flux:edit_review' ticket_and_review.id %}" class="btn">Modifier</a>
+                    <form method="post" action="{% url 'flux:delete_review' ticket_and_review.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

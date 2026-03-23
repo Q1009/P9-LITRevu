@@ -2,16 +2,16 @@
 {% load flux_extras %}
 
 {% block content %}
-    <h2>Flux</h2>
-    <p>Welcome to the Flux page! Here you can see the latest posts from your friends.</p>
-    <a href="{% url 'flux:create_ticket' %}">Demander une critique</a>
-    <a href="{% url 'flux:create_review' %}">Créer une critique</a>
+    <div class="action-links">
+        <a href="{% url 'flux:create_ticket' %}" class="btn">Demander une critique</a>
+        <a href="{% url 'flux:create_review' %}" class="btn">Créer une critique</a>
+    </div>
     {% for ticket_and_review in tickets_and_reviews %}
         {% if ticket_and_review|model_type == 'Ticket' %}
             {% if ticket_and_review.author == user %}
                 <div class="ticket">
                     <h3>Vous avez demandé une critique</h3>
-                    <h4>{{ ticket_and_review.date_created }}</h4>
+                    <h4 class="date">{{ ticket_and_review.date_created }}</h4>
                     <h3>{{ ticket_and_review.title }}</h3>
                     <p>{{ ticket_and_review.description }}</p>
                     {% if ticket_and_review.image %}
@@ -20,12 +20,12 @@
                     {% if ticket_and_review.time_edited %}
                         <p>Edited on {{ ticket_and_review.time_edited }}</p>
                     {% endif %}
-                    <a href="{% url 'flux:edit_review' ticket_and_review.id %}">Modifier</a>
+                    <a href="{% url 'flux:edit_review' ticket_and_review.id %}" class="btn">Modifier</a>
                 </div>
             {% else %}
                 <div class="ticket">
                     <h3>{{ticket_and_review.author.username}} a demandé une critique</h3>
-                    <h4>{{ ticket_and_review.date_created }}</h4>
+                    <h4 class="date">{{ ticket_and_review.date_created }}</h4>
                     <h3>{{ ticket_and_review.title }}</h3>
                     <p>{{ ticket_and_review.description }}</p>
                     {% if ticket_and_review.image %}
@@ -34,19 +34,21 @@
                     {% if ticket_and_review.time_edited %}
                         <p>Edited on {{ ticket_and_review.time_edited }}</p>
                     {% endif %}
-                    <a href="{% url 'flux:create_review_for_ticket' ticket_and_review.id %}">Créer une critique</a>
+                    <div class="card-actions">
+                        <a href="{% url 'flux:create_review_for_ticket' ticket_and_review.id %}" class="btn">Créer une critique</a>
+                    </div>
                 </div>
             {% endif %}
         {% elif ticket_and_review|model_type == 'Review' %}
             {% if ticket_and_review.author == user %}
             <div class="review">
                 <h3>Vous avez publié une critique</h3>
-                <h4>{{ ticket_and_review.time_created }}</h4>
-                <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating }}</h3>
+                <h4 class="date">{{ ticket_and_review.time_created }}</h4>
+                <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
                 <p>{{ ticket_and_review.body }}</p>
                 <div class="ticket_of_review">
                     <h3>Ticket - {{ticket_and_review.ticket.author.username}}</h3>
-                    <h4>{{ ticket_and_review.ticket.date_created }}</h4>
+                    <h4 class="date">{{ ticket_and_review.ticket.date_created }}</h4>
                     <h3>{{ ticket_and_review.ticket.title }}</h3>
                     <p>{{ ticket_and_review.ticket.description }}</p>
                     {% if ticket_and_review.ticket.image %}
@@ -57,12 +59,12 @@
             {% else %}
             <div class="review">
                 <h3>{{ ticket_and_review.user.username }} a publié une critique</h3>
-                <h4>{{ ticket_and_review.time_created }}</h4>
-                <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating }}</h3>
+                <h4 class="date">{{ ticket_and_review.time_created }}</h4>
+                <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
                 <p>{{ ticket_and_review.body }}</p>
                 <div class="ticket_of_review">
                     <h3>Ticket - {{ticket_and_review.ticket.author.username}}</h3>
-                    <h4>{{ ticket_and_review.ticket.date_created }}</h4>
+                    <h4 class="date">{{ ticket_and_review.ticket.date_created }}</h4>
                     <h3>{{ ticket_and_review.ticket.title }}</h3>
                     <p>{{ ticket_and_review.ticket.description }}</p>
                     {% if ticket_and_review.ticket.image %}

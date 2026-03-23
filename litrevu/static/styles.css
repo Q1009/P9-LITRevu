@@ -1,3 +1,369 @@
+/* ── Reset & base ────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    background-color: bisque;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    background-color: #f4f6f8;
+    color: #1a1a2e;
+    min-height: 100vh;
+}
+
+/* ── Typography ──────────────────────────────────────── */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h1 { font-size: 1.8rem; color: #1a1a2e; }
+h2 { font-size: 1.4rem; margin-top: 2rem; margin-bottom: 2rem; text-align: center; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 0.85rem; color: #6b7280; font-weight: 400; }
+h4.date { text-align: right; }
+
+p { color: #374151; }
+
+a {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 500;
+}
+a:hover { text-decoration: underline; }
+
+/* ── Layout ──────────────────────────────────────────── */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.nav-brand {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #4f46e5;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    border-bottom: none !important;
+}
+.nav-brand:hover {
+    text-decoration: none;
+    color: #4338ca;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+nav a {
+    color: #374151;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+nav a:hover {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+    text-decoration: none;
+}
+
+nav a.active {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+    font-weight: 600;
+}
+
+/* Site title */
+body > h1 {
+    text-align: center;
+    padding: 1.25rem 2rem 0;
+    letter-spacing: -0.5px;
+    color: #4f46e5;
+}
+
+/* Page content wrapper */
+main {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1.5rem;
+}
+
+/* Page content wrapper - legacy fallback */
+body > h1 ~ * {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1.5rem;
+}
+
+/* ── Cards ───────────────────────────────────────────── */
+.ticket, .review {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ticket img, .review img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 0.75rem;
+}
+
+.ticket_of_review {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-top: 0.75rem;
+}
+
+/* ── Forms ───────────────────────────────────────────── */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #ffffff;
+    color: #1a1a2e;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+button[type="submit"],
+.btn {
+    align-self: flex-end;
+    padding: 0.5rem 1.25rem;
+    background: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    display: inline-block;
+    text-decoration: none;
+    box-sizing: border-box;
+    line-height: 1.6;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+button[type="submit"]:hover,
+.btn:hover {
+    background: #4338ca;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+/* Bouton destructeur (Supprimer) */
+button[type="submit"].danger {
+    background: #ef4444;
+}
+button[type="submit"].danger:hover {
+    background: #dc2626;
+}
+
+/* ── Errors ──────────────────────────────────────────── */
+.errorlist {
+    color: #dc2626;
+    font-size: 0.875rem;
+    list-style: none;
+}
+
+p[style*="color: red"] {
+    color: #dc2626 !important;
+    font-size: 0.875rem;
+}
+
+/* ── Subscriptions lists ─────────────────────────────── */
+ul {
+    list-style: none;
+}
+
+/* ── Card actions ───────────────────────────────────── */
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.card-actions form {
+    margin: 0;
+}
+
+.card-actions .btn {
+    align-self: auto;
+}
+
+.subscription-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    background: #ffffff;
+}
+
+.subscription-item form {
+    margin: 0;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.input-row input {
+    flex: 1;
+}
+
+/* ── Action links ───────────────────────────────────── */
+.action-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.25rem 0;
+}
+
+.action-links .btn {
+    align-self: auto;
+}
+
+/* ── Radio buttons (rating) ──────────────────────────── */
+#rating,
+#id_rating {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+
+/* Tablette : ≤ 1024px */
+@media (max-width: 1024px) {
+    body > h1 ~ * {
+        padding: 0 1rem;
+    }
+
+    nav {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .nav-links {
+        gap: 1rem;
+    }
+
+    body > h1 {
+        font-size: 1.5rem;
+        padding: 1rem 1rem 0;
+    }
+
+    h2 { font-size: 1.2rem; }
+
+    .ticket, .review {
+        padding: 1rem;
+    }
+
+    .action-links {
+        flex-wrap: wrap;
+    }
+
+    button[type="submit"],
+    .btn {
+        text-align: center;
+    }
+}
+
+/* Téléphone : ≤ 480px */
+@media (max-width: 480px) {
+    body {
+        font-size: 0.95rem;
+    }
+
+    nav {
+        gap: 0.6rem;
+        padding: 0.6rem 0.75rem;
+    }
+
+    nav a {
+        font-size: 0.85rem;
+    }
+
+    body > h1 {
+        font-size: 1.3rem;
+    }
+
+    h2 { font-size: 1.1rem; }
+    h3 { font-size: 1rem; }
+
+    .ticket, .review {
+        border-radius: 8px;
+        padding: 0.75rem;
+    }
+
+    .ticket_of_review {
+        padding: 0.6rem 0.75rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea,
+    select {
+        font-size: 1rem; /* évite le zoom auto sur iOS */
+    }
 }
