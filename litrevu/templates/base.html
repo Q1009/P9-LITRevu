@@ -18,6 +18,8 @@
                 <a href="{% url 'authentication:logout' %}">Se déconnecter</a>
             </div>
         </nav>
+        {% else %}
+        <h1 class="brand-title">LITRevu</h1>
         {% endif %}
         <main>
             {% block content %}

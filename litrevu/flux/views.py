@@ -17,14 +17,19 @@ class HomePage(LoginRequiredMixin, View):
         users_followed = auth_models.User.objects.filter(followed_by__user=request.user)
         tickets = models.Ticket.objects.filter(author__in=users_followed)
         reviews = models.Review.objects.filter(ticket__in=tickets)
-        #Il faut bloquer les reviews aux tickets si un utilisateur à déjà posté une review en réponse
-        #Existe-t-il un moyen de faire une requête qui récupère les tickets et les reviews associées, triées par date de création côté base de données ? (pour éviter de faire le tri en Python avec sorted et chain)
+        reviewed_ticket_ids = set(reviews.values_list('ticket_id', flat=True))
         tickets_and_reviews = sorted(
             chain(tickets, reviews),
             key=lambda instance: instance.date_created if isinstance(instance, models.Ticket) else instance.time_created,
             reverse=True
         )
-        return render(request, self.template_name, context={'tickets_and_reviews': tickets_and_reviews})
+
+        context = {
+            'tickets_and_reviews': tickets_and_reviews,
+            'reviewed_ticket_ids': reviewed_ticket_ids,
+        }
+
+        return render(request, self.template_name, context=context)
     
 class PostsPage(LoginRequiredMixin, View):
     template_name = 'flux/posts.html'
@@ -192,6 +197,8 @@ class CreateReviewForTicketPage(LoginRequiredMixin, View):
 
     def get(self, request, ticket_id):
         ticket = get_object_or_404(models.Ticket, id=ticket_id)
+        if models.Review.objects.filter(ticket=ticket).exists():
+            return redirect(settings.LOGIN_REDIRECT_URL)
         review_form = self.review_form_class()
         context = {
             'form': review_form,
@@ -201,6 +208,8 @@ class CreateReviewForTicketPage(LoginRequiredMixin, View):
     
     def post(self, request, ticket_id):
         ticket = get_object_or_404(models.Ticket, id=ticket_id)
+        if models.Review.objects.filter(ticket=ticket).exists():
+            return redirect(settings.LOGIN_REDIRECT_URL)
         review_form = self.review_form_class(request.POST)
         if review_form.is_valid():
             review = review_form.save(commit=False)

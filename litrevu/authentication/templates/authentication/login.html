@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <p>{{ message }}</p>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Se connecter</button>
-    </form>
-
-    <p>Vous n'avez pas de compte ? <a href="{% url 'authentication:signup' %}">Inscrivez-vous ici</a>.</p>
+<div class="auth-layout">
+    <div class="subscription-panel">
+        <h2>Inscription</h2>
+        <p>Inscrivez-vous maintenant</p>
+        <a href="{% url 'authentication:signup' %}" class="btn-sub">S'inscrire</a>
+    </div>
+    <div class="auth-divider"></div>
+    <div class="auth-panel">
+        <h2>Connexion</h2>
+        {% if message %}<p class="auth-message">{{ message }}</p>{% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="card-actions">
+                <button type="submit">Se connecter</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock content %}

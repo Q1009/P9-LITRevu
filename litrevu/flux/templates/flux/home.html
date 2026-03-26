@@ -6,6 +6,11 @@
         <a href="{% url 'flux:create_ticket' %}" class="btn">Demander une critique</a>
         <a href="{% url 'flux:create_review' %}" class="btn">Créer une critique</a>
     </div>
+    {% if not tickets_and_reviews %}
+        <p class="no-content-message">
+            Vous n'avez pas encore d'abonnements. <a href="{% url 'flux:subscriptions' %}">Suivre des utilisateurs</a> pour voir leur contenu ici.
+        </p>
+    {% endif %}
     {% for ticket_and_review in tickets_and_reviews %}
         {% if ticket_and_review|model_type == 'Ticket' %}
             {% if ticket_and_review.author == user %}
@@ -34,9 +39,11 @@
                     {% if ticket_and_review.time_edited %}
                         <p>Edited on {{ ticket_and_review.time_edited }}</p>
                     {% endif %}
+                    {% if ticket_and_review.id not in reviewed_ticket_ids %}
                     <div class="card-actions">
                         <a href="{% url 'flux:create_review_for_ticket' ticket_and_review.id %}" class="btn">Créer une critique</a>
                     </div>
+                    {% endif %}
                 </div>
             {% endif %}
         {% elif ticket_and_review|model_type == 'Review' %}

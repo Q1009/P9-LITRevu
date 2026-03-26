@@ -8,30 +8,41 @@
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {%for field in edit_form %}
-            <div>
-            {%if field.name == 'title'%}
-                <label for="title">Titre</label>
-                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value }}">
-            {% endif %}
-            </div>
-            <div>
-            {%if field.name == 'description'%}
-                <label for="description">Description</label>
-                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}">{{ field.value }}</textarea>
-            {% endif %}
-            </div>
-             {% if field.name == 'image' and not field.value %}
-                <label for="image">Image</label>
-                <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}">
-            {% endif %}
-            {% if field.name == 'image' and field.value %}
-                <img src="{{ field.value.url }}" alt="Current Image" style="max-width: 200px;"/>
-                <!-- Modifier le style du label en bouton -->
-                <label for="image" class="btn">Télécharger fichier</label>
-                <input type="file" name="{{ field.name }}" id="image" style="display: none;">
+        {% for field in edit_form %}
+            {% if field.name == 'image' %}
+                <div>
+                    <label>Image</label>
+                    {% if field.value %}
+                        <img src="{{ field.value.url }}" alt="Image actuelle" style="display:block; max-width: 200px; margin-bottom: 0.5rem;" />
+                    {% endif %}
+                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept="image/*" style="display:none;">
+                    <label for="{{ field.id_for_label }}" class="btn">Télécharger fichier</label>
+                    <span id="{{ field.id_for_label }}_name" style="margin-left: 0.5rem; font-size: 0.875rem; color: #6b7280;"></span>
+                </div>
+            {% elif field.is_hidden %}
+                {{ field }}
+            {% else %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                    {% endif %}
+                </div>
             {% endif %}
         {% endfor %}
-        <button type="submit">Envoyer</button>
+        <div class="card-actions">
+            <button type="submit">Envoyer</button>
+        </div>
     </form>
+    <script>
+        document.querySelectorAll('input[type="file"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                var nameSpan = document.getElementById(this.id + '_name');
+                if (nameSpan) {
+                    nameSpan.textContent = this.files.length > 0 ? this.files[0].name : '';
+                }
+            });
+        });
+    </script>
 {% endblock %}

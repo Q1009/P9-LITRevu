@@ -1,6 +1,5 @@
 from django import forms
 from flux.models import Ticket, Review
-from django.contrib.auth import get_user_model
 
 class TicketForm(forms.ModelForm):
     edit_ticket = forms.BooleanField(widget=forms.HiddenInput(), initial=True)
