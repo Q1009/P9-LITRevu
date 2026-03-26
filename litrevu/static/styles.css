@@ -294,6 +294,26 @@ ul {
     list-style: none;
 }
 
+/* ── Form sections (create_review) ──────────────────── */
+.form-section {
+    background: #f8f9ff;
+    border: 1px solid #e0e7ff;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-section h3 {
+    margin: 0 0 1rem;
+    color: #4f46e5;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+p.title {
+    font-weight: 700;
+}
+
 /* ── Card actions ───────────────────────────────────── */
 .card-actions {
     display: flex;
@@ -354,9 +374,22 @@ ul {
 #id_rating {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: row;
+    gap: 4rem;
     padding: 0;
     list-style: none;
+}
+
+#rating li,
+#id_rating li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#rating li label,
+#id_rating li label {
+    margin: 0;
 }
 
 /* ── Responsive ──────────────────────────────────────── */

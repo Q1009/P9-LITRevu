@@ -98,47 +98,35 @@ class CreateTicketPage(LoginRequiredMixin, View):
             ticket = form.save(commit=False)
             ticket.author = request.user
             ticket.save()
-            return redirect(settings.LOGIN_REDIRECT_URL)
+            return redirect('flux:posts')
         return render(request, self.template_name, context={'form': form})
     
 class EditTicketPage(LoginRequiredMixin, View):
     template_name = 'flux/edit_ticket.html'
     edit_form_class = forms.TicketForm
-    delete_form_class = forms.DeleteTicketForm
 
     def get(self, request, ticket_id):
         ticket = get_object_or_404(models.Ticket, id=ticket_id)
         if ticket.author != request.user:
             return redirect(settings.LOGIN_REDIRECT_URL)
         edit_form = self.edit_form_class(instance=ticket)
-        delete_form = self.delete_form_class()
         context = {
             'edit_form': edit_form,
-            'delete_form': delete_form,
         }
         return render(request, self.template_name, context=context)
     
     def post(self, request, ticket_id):
         ticket = get_object_or_404(models.Ticket, id=ticket_id)
-        edit_form = self.edit_form_class(instance=ticket)
-        delete_form = self.delete_form_class()
         if ticket.author != request.user:
             return redirect(settings.LOGIN_REDIRECT_URL)
-        if 'edit_ticket' in request.POST:
-            edit_form = self.edit_form_class(request.POST, request.FILES, instance=ticket)
-            if edit_form.is_valid():
-                edit_form.save(commit=False)
-                ticket.date_edited = timezone.now()
-                edit_form.save()
-                return redirect(settings.LOGIN_REDIRECT_URL)
-        if 'delete_ticket' in request.POST:
-            delete_form = self.delete_form_class(request.POST)
-            if delete_form.is_valid():
-                ticket.delete()
-                return redirect(settings.LOGIN_REDIRECT_URL)
+        edit_form = self.edit_form_class(request.POST, request.FILES, instance=ticket)
+        if edit_form.is_valid():
+            edit_form.save(commit=False)
+            ticket.date_edited = timezone.now()
+            edit_form.save()
+            return redirect('flux:posts')
         context = {
             'edit_form': edit_form,
-            'delete_form': delete_form,
         }
         return render(request, self.template_name, context=context)
     
@@ -232,25 +220,30 @@ class ReviewDeleteView(LoginRequiredMixin, View):
     
 class EditReviewPage(LoginRequiredMixin, View):
     template_name = 'flux/edit_review.html'
-    form_class = forms.ReviewForm
+    edit_form_class = forms.ReviewForm
 
     def get(self, request, review_id):
         review = get_object_or_404(models.Review, id=review_id)
-        form = self.form_class(instance=review)
+        ticket = get_object_or_404(models.Ticket, id=review.ticket_id)
+        edit_form = self.edit_form_class(instance=review)
         context = {
-            'form': form,
-            'review': review,
+            'edit_form': edit_form,
+            'ticket': ticket,
         }
         return render(request, self.template_name, context=context)
     
     def post(self, request, review_id):
         review = get_object_or_404(models.Review, id=review_id)
-        form = self.form_class(request.POST, instance=review)
-        if form.is_valid():
-            form.save()
-            return redirect(settings.LOGIN_REDIRECT_URL)
+        ticket = get_object_or_404(models.Ticket, id=review.ticket_id)
+        edit_form = self.edit_form_class(request.POST, instance=review)
+        if edit_form.is_valid():
+            edit_form.save(commit=False)
+            review.time_created = timezone.now()
+            edit_form.save()
+            return redirect('flux:posts')
+            
         context = {
-            'form': form,
-            'review': review,
+            'edit_form': edit_form,
+            'ticket': ticket,
         }
         return render(request, self.template_name, context=context)

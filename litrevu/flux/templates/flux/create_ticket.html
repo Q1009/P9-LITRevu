@@ -8,29 +8,32 @@
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% for field in form %}
-            {% if field.name == 'image' %}
-                <div>
-                    <label>{{ field.label }}</label>
-                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept="image/*" style="display:none;">
-                    <label for="{{ field.id_for_label }}" class="btn">Télécharger fichier</label>
-                    <span id="{{ field.id_for_label }}_name" style="margin-left: 0.5rem; font-size: 0.875rem; color: #6b7280;"></span>
-                    {% if field.errors %}
-                        <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-                    {% endif %}
-                </div>
-            {% elif field.is_hidden %}
-                {{ field }}
-            {% else %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <div class="form-section">
+            <h3>Livre / Article</h3>
+            {% for field in form %}
+                {% if field.name == 'image' %}
+                    <div>
+                        <label>{{ field.label }}</label>
+                        <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept="image/*" style="display:none;">
+                        <label for="{{ field.id_for_label }}" class="btn">Télécharger fichier</label>
+                        <span id="{{ field.id_for_label }}_name" style="margin-left: 0.5rem; font-size: 0.875rem; color: #6b7280;"></span>
+                        {% if field.errors %}
+                            <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                {% elif field.is_hidden %}
                     {{ field }}
-                    {% if field.errors %}
-                        <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
-                    {% endif %}
-                </div>
-            {% endif %}
-        {% endfor %}
+                {% else %}
+                    <div>
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
         <div class="card-actions">
             <button type="submit">Créer</button>
         </div>
