@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from itertools import chain
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 # Create your views here.
 class HomePage(LoginRequiredMixin, View):
@@ -27,8 +28,12 @@ class HomePage(LoginRequiredMixin, View):
             reverse=True
         )
 
+        paginator = Paginator(tickets_and_reviews, 6)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
         context = {
-            'tickets_and_reviews': tickets_and_reviews,
+            'tickets_and_reviews': page_obj,
             'reviewed_ticket_ids': reviewed_ticket_ids,
         }
 
@@ -45,7 +50,10 @@ class PostsPage(LoginRequiredMixin, View):
             key=lambda instance: instance.date_created if isinstance(instance, models.Ticket) else instance.time_created,
             reverse=True
         )
-        return render(request, self.template_name, context={'tickets_and_reviews': tickets_and_reviews})
+        paginator = Paginator(tickets_and_reviews, 6)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, self.template_name, context={'tickets_and_reviews': page_obj})
     
 class SubscriptionsPage(LoginRequiredMixin, View):
     template_name = 'flux/subscriptions.html'

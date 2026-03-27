@@ -54,4 +54,15 @@
             </div>
         {% endif %}
     {% endfor %}
+
+    <div class="pagination">
+        {% if tickets_and_reviews.has_previous %}
+            <a href="?page={{ tickets_and_reviews.previous_page_number }}" class="btn-page">←</a>
+        {% endif %}
+        <span>Page {{ tickets_and_reviews.number }} sur {{ tickets_and_reviews.paginator.num_pages }}</span>
+        {% if tickets_and_reviews.has_next %}
+            <a href="?page={{ tickets_and_reviews.next_page_number }}" class="btn-page">→</a>
+        {% endif %}
+    </div>
+
 {% endblock %}

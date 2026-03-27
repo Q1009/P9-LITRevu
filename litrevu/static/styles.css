@@ -333,6 +333,38 @@ p.title {
     align-self: auto;
 }
 
+/* ── Pagination ─────────────────────────────────────── */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.btn-page {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-page:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.pagination span {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
 .subscription-item {
     display: flex;
     justify-content: space-between;
