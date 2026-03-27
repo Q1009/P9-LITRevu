@@ -9,9 +9,9 @@ A Django-based web application for literary reviews. LITRevu lets users request 
 - **Authentication**: sign up, log in, and log out
 - **Tickets**: create a review request for a book or article (with optional image upload)
 - **Reviews**: respond to an existing ticket, or create a standalone review (ticket + review on a single page)
-- **Feed**: display tickets and reviews from followed users, sorted by date
-- **My posts**: view and manage your own tickets and reviews
-- **Subscriptions**: follow / unfollow other users
+- **Feed**: display tickets and reviews from followed users and your own, sorted by date (paginated, 6 items per page)
+- **My posts**: view and manage your own tickets and reviews (paginated, 6 items per page)
+- **Subscriptions**: follow / unfollow other users; also see who follows you
 - **Business rules**:
   - A ticket can only receive one review (the button is hidden and the URL is blocked if a review already exists)
   - A user cannot follow themselves
@@ -35,7 +35,7 @@ A Django-based web application for literary reviews. LITRevu lets users request 
 
 ```bash
 git clone https://github.com/Q1009/P9-LITRevu.git
-cd "P9-LITRevu"
+cd P9\ -\ LITRevu
 ```
 
 ### 2. Create and activate the virtual environment
@@ -128,7 +128,7 @@ P9 - LITRevu/
 |----------------|-------------------|--------------------------------|
 | `title`        | CharField(128)    | Book / article title           |
 | `description`  | TextField(8192)   | Description                    |
-| `image`        | ImageField        | Optional image (UUID filename) |
+| `image`        | ImageField        | Image (UUID filename)          |
 | `author`       | ForeignKey(User)  | Ticket author                  |
 | `date_created` | DateTimeField     | Creation date                  |
 | `date_edited`  | DateTimeField     | Last edit date                 |
@@ -142,6 +142,7 @@ P9 - LITRevu/
 | `body`         | TextField(8192)   | Review body                    |
 | `user`         | ForeignKey(User)  | Review author                  |
 | `time_created` | DateTimeField     | Creation date                  |
+| `time_edited`  | DateTimeField     | Last edit date (nullable)      |
 
 ### `UserFollows`
 | Field          | Type              | Description                    |
