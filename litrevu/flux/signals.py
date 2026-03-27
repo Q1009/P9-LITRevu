@@ -3,12 +3,15 @@ from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from .models import Ticket
 
+
 @receiver(post_delete, sender=Ticket)
 def delete_ticket_image(sender, instance, **kwargs):
     if instance.image:
-        print(f"Deleting image for ticket {instance.id}: {instance.image.path}")
+        print(
+            f"Deleting image for ticket {instance.id}: {instance.image.path}")
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
 
 @receiver(pre_save, sender=Ticket)
 def delete_old_ticket_image(sender, instance, **kwargs):

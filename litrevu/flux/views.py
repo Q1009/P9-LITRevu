@@ -12,11 +12,14 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 # Create your views here.
+
+
 class HomePage(LoginRequiredMixin, View):
     template_name = 'flux/home.html'
 
     def get(self, request):
-        users_followed = auth_models.User.objects.filter(followed_by__user=request.user)
+        users_followed = auth_models.User.objects.filter(
+            followed_by__user=request.user)
         tickets = models.Ticket.objects.filter(
             Q(author__in=users_followed) | Q(author=request.user)
         )
@@ -24,7 +27,8 @@ class HomePage(LoginRequiredMixin, View):
         reviewed_ticket_ids = set(reviews.values_list('ticket_id', flat=True))
         tickets_and_reviews = sorted(
             chain(tickets, reviews),
-            key=lambda instance: instance.date_created if isinstance(instance, models.Ticket) else instance.time_created,
+            key=lambda instance: instance.date_created if isinstance(
+                instance, models.Ticket) else instance.time_created,
             reverse=True
         )
 
@@ -38,7 +42,8 @@ class HomePage(LoginRequiredMixin, View):
         }
 
         return render(request, self.template_name, context=context)
-    
+
+
 class PostsPage(LoginRequiredMixin, View):
     template_name = 'flux/posts.html'
 
@@ -47,22 +52,29 @@ class PostsPage(LoginRequiredMixin, View):
         reviews = models.Review.objects.filter(user=request.user)
         tickets_and_reviews = sorted(
             chain(tickets, reviews),
-            key=lambda instance: instance.date_created if isinstance(instance, models.Ticket) else instance.time_created,
+            key=lambda instance: instance.date_created if isinstance(
+                instance, models.Ticket) else instance.time_created,
             reverse=True
         )
         paginator = Paginator(tickets_and_reviews, 6)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, self.template_name, context={'tickets_and_reviews': page_obj})
-    
+        context = {
+            'tickets_and_reviews': page_obj,
+        }
+        return render(request, self.template_name, context=context)
+
+
 class SubscriptionsPage(LoginRequiredMixin, View):
     template_name = 'flux/subscriptions.html'
     form_class = forms.FollowUsersForm
 
     def get(self, request):
         form = self.form_class()
-        users_followed = auth_models.User.objects.filter(followed_by__user=request.user)
-        users_following = auth_models.User.objects.filter(follows__user_followed=request.user)
+        users_followed = auth_models.User.objects.filter(
+            followed_by__user=request.user)
+        users_following = auth_models.User.objects.filter(
+            follows__user_followed=request.user)
 
         context = {
             'form': form,
@@ -70,11 +82,13 @@ class SubscriptionsPage(LoginRequiredMixin, View):
             'users_following': users_following,
         }
         return render(request, self.template_name, context=context)
-    
+
     def post(self, request):
         form = self.form_class(request.POST)
-        users_followed = auth_models.User.objects.filter(followed_by__user=request.user)
-        users_following = auth_models.User.objects.filter(follows__user_followed=request.user)
+        users_followed = auth_models.User.objects.filter(
+            followed_by__user=request.user)
+        users_following = auth_models.User.objects.filter(
+            follows__user_followed=request.user)
 
         context = {
             'form': form,
@@ -83,26 +97,33 @@ class SubscriptionsPage(LoginRequiredMixin, View):
         }
         if form.is_valid():
             if form.cleaned_data['user_to_follow'] == request.user.username:
-                form.add_error('user_to_follow', "Vous ne pouvez pas vous suivre vous-même.")
+                form.add_error('user_to_follow',
+                               "Vous ne pouvez pas vous suivre vous-même.")
                 return render(request, self.template_name, context=context)
-            user_to_follow = auth_models.User.objects.filter(username=form.cleaned_data['user_to_follow']).first()
+            user_to_follow = auth_models.User.objects.filter(
+                username=form.cleaned_data['user_to_follow']).first()
             if not user_to_follow:
-                form.add_error('user_to_follow', "Cet utilisateur n'existe pas.")
+                form.add_error('user_to_follow',
+                               "Cet utilisateur n'existe pas.")
                 return render(request, self.template_name, context=context)
-            if models.UserFollows.objects.filter(user=request.user, user_followed=user_to_follow).exists():
-                form.add_error('user_to_follow', "Vous suivez déjà cet utilisateur.")
+            if models.UserFollows.objects.filter(
+                    user=request.user, user_followed=user_to_follow).exists():
+                form.add_error('user_to_follow',
+                               "Vous suivez déjà cet utilisateur.")
                 return render(request, self.template_name, context=context)
-            models.UserFollows.objects.create(user=request.user, user_followed=user_to_follow)
+            models.UserFollows.objects.create(
+                user=request.user, user_followed=user_to_follow)
             return redirect('flux:subscriptions')
         return render(request, self.template_name, context=context)
-    
+
+
 class CreateTicketPage(LoginRequiredMixin, View):
     template_name = 'flux/create_ticket.html'
 
     def get(self, request):
         form = forms.TicketForm()
         return render(request, self.template_name, {'form': form})
-    
+
     def post(self, request):
         form = forms.TicketForm(request.POST, request.FILES)
         if form.is_valid():
@@ -111,7 +132,8 @@ class CreateTicketPage(LoginRequiredMixin, View):
             ticket.save()
             return redirect('flux:posts')
         return render(request, self.template_name, context={'form': form})
-    
+
+
 class EditTicketPage(LoginRequiredMixin, View):
     template_name = 'flux/edit_ticket.html'
     edit_form_class = forms.TicketForm
@@ -125,12 +147,13 @@ class EditTicketPage(LoginRequiredMixin, View):
             'edit_form': edit_form,
         }
         return render(request, self.template_name, context=context)
-    
+
     def post(self, request, ticket_id):
         ticket = get_object_or_404(models.Ticket, id=ticket_id)
         if ticket.author != request.user:
             return redirect(settings.LOGIN_REDIRECT_URL)
-        edit_form = self.edit_form_class(request.POST, request.FILES, instance=ticket)
+        edit_form = self.edit_form_class(
+            request.POST, request.FILES, instance=ticket)
         if edit_form.is_valid():
             edit_form.save(commit=False)
             ticket.date_edited = timezone.now()
@@ -140,7 +163,8 @@ class EditTicketPage(LoginRequiredMixin, View):
             'edit_form': edit_form,
         }
         return render(request, self.template_name, context=context)
-    
+
+
 class TicketDeleteView(LoginRequiredMixin, View):
 
     def post(self, request, ticket_id):
@@ -149,15 +173,19 @@ class TicketDeleteView(LoginRequiredMixin, View):
             return redirect(settings.LOGIN_REDIRECT_URL)
         ticket.delete()
         return redirect('flux:posts')
-    
+
+
 class SubscriptionDeleteView(LoginRequiredMixin, View):
 
     def post(self, request, user_followed_id):
-        user_followed = get_object_or_404(auth_models.User, id=user_followed_id)
-        subscription = get_object_or_404(models.UserFollows, user=request.user, user_followed=user_followed)
+        user_followed = get_object_or_404(
+            auth_models.User, id=user_followed_id)
+        subscription = get_object_or_404(
+            models.UserFollows, user=request.user, user_followed=user_followed)
         subscription.delete()
         return redirect('flux:subscriptions')
-    
+
+
 class CreateReviewPage(LoginRequiredMixin, View):
     template_name = 'flux/create_review.html'
     review_form_class = forms.ReviewForm
@@ -171,7 +199,7 @@ class CreateReviewPage(LoginRequiredMixin, View):
             'ticket_form': ticket_form,
         }
         return render(request, self.template_name, context=context)
-    
+
     def post(self, request):
         review_form = self.review_form_class(request.POST)
         ticket_form = self.ticket_form_class(request.POST, request.FILES)
@@ -189,7 +217,8 @@ class CreateReviewPage(LoginRequiredMixin, View):
             'ticket_form': ticket_form,
         }
         return render(request, self.template_name, context=context)
-    
+
+
 class CreateReviewForTicketPage(LoginRequiredMixin, View):
     template_name = 'flux/create_review_for_ticket.html'
     review_form_class = forms.ReviewForm
@@ -204,7 +233,7 @@ class CreateReviewForTicketPage(LoginRequiredMixin, View):
             'ticket': ticket,
         }
         return render(request, self.template_name, context=context)
-    
+
     def post(self, request, ticket_id):
         ticket = get_object_or_404(models.Ticket, id=ticket_id)
         if models.Review.objects.filter(ticket=ticket).exists():
@@ -221,14 +250,16 @@ class CreateReviewForTicketPage(LoginRequiredMixin, View):
             'ticket': ticket,
         }
         return render(request, self.template_name, context=context)
-    
+
+
 class ReviewDeleteView(LoginRequiredMixin, View):
 
     def post(self, request, review_id):
         review = get_object_or_404(models.Review, id=review_id)
         review.delete()
         return redirect(settings.LOGIN_REDIRECT_URL)
-    
+
+
 class EditReviewPage(LoginRequiredMixin, View):
     template_name = 'flux/edit_review.html'
     edit_form_class = forms.ReviewForm
@@ -242,7 +273,7 @@ class EditReviewPage(LoginRequiredMixin, View):
             'ticket': ticket,
         }
         return render(request, self.template_name, context=context)
-    
+
     def post(self, request, review_id):
         review = get_object_or_404(models.Review, id=review_id)
         ticket = get_object_or_404(models.Ticket, id=review.ticket_id)
@@ -252,7 +283,7 @@ class EditReviewPage(LoginRequiredMixin, View):
             review.time_edited = timezone.now()
             edit_form.save()
             return redirect(settings.LOGIN_REDIRECT_URL)
-            
+
         context = {
             'edit_form': edit_form,
             'ticket': ticket,
