@@ -8,6 +8,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from itertools import chain
+from django.db.models import Q
 
 # Create your views here.
 class HomePage(LoginRequiredMixin, View):
@@ -15,7 +16,9 @@ class HomePage(LoginRequiredMixin, View):
 
     def get(self, request):
         users_followed = auth_models.User.objects.filter(followed_by__user=request.user)
-        tickets = models.Ticket.objects.filter(author__in=users_followed)
+        tickets = models.Ticket.objects.filter(
+            Q(author__in=users_followed) | Q(author=request.user)
+        )
         reviews = models.Review.objects.filter(ticket__in=tickets)
         reviewed_ticket_ids = set(reviews.values_list('ticket_id', flat=True))
         tickets_and_reviews = sorted(
@@ -216,7 +219,7 @@ class ReviewDeleteView(LoginRequiredMixin, View):
     def post(self, request, review_id):
         review = get_object_or_404(models.Review, id=review_id)
         review.delete()
-        return redirect('flux:posts')
+        return redirect(settings.LOGIN_REDIRECT_URL)
     
 class EditReviewPage(LoginRequiredMixin, View):
     template_name = 'flux/edit_review.html'
@@ -238,9 +241,9 @@ class EditReviewPage(LoginRequiredMixin, View):
         edit_form = self.edit_form_class(request.POST, instance=review)
         if edit_form.is_valid():
             edit_form.save(commit=False)
-            review.time_created = timezone.now()
+            review.time_edited = timezone.now()
             edit_form.save()
-            return redirect('flux:posts')
+            return redirect(settings.LOGIN_REDIRECT_URL)
             
         context = {
             'edit_form': edit_form,

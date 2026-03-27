@@ -15,41 +15,47 @@
         {% if ticket_and_review|model_type == 'Ticket' %}
             {% if ticket_and_review.author == user %}
                 <div class="ticket">
-                    <h3>Vous avez demandé une critique</h3>
+                    <h3>{% get_user_display ticket_and_review.author %} demandé une critique</h3>
                     <h4 class="date">{{ ticket_and_review.date_created }}</h4>
                     <h3>{{ ticket_and_review.title }}</h3>
                     <p>{{ ticket_and_review.description }}</p>
                     {% if ticket_and_review.image %}
                         <img src="{{ ticket_and_review.image.url }}" alt="Ticket Image" />
                     {% endif %}
-                    {% if ticket_and_review.time_edited %}
-                        <p>Edited on {{ ticket_and_review.time_edited }}</p>
+                    <div class="card-actions">
+                        <a href="{% url 'flux:edit_ticket' ticket_and_review.id %}" class="btn">Modifier</a>
+                        <form method="post" action="{% url 'flux:delete_ticket' ticket_and_review.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn">Supprimer</button>
+                        </form>
+                    </div> 
+                    {% if ticket_and_review.date_edited %}
+                        <h4 class="date">Edited on {{ ticket_and_review.date_edited }}</h4>
                     {% endif %}
-                    <a href="{% url 'flux:edit_review' ticket_and_review.id %}" class="btn">Modifier</a>
                 </div>
             {% else %}
                 <div class="ticket">
-                    <h3>{{ticket_and_review.author.username}} a demandé une critique</h3>
+                    <h3>{% get_user_display ticket_and_review.author %} demandé une critique</h3>
                     <h4 class="date">{{ ticket_and_review.date_created }}</h4>
                     <h3>{{ ticket_and_review.title }}</h3>
                     <p>{{ ticket_and_review.description }}</p>
                     {% if ticket_and_review.image %}
                         <img src="{{ ticket_and_review.image.url }}" alt="Ticket Image" />
-                    {% endif %}
-                    {% if ticket_and_review.time_edited %}
-                        <p>Edited on {{ ticket_and_review.time_edited }}</p>
                     {% endif %}
                     {% if ticket_and_review.id not in reviewed_ticket_ids %}
                     <div class="card-actions">
                         <a href="{% url 'flux:create_review_for_ticket' ticket_and_review.id %}" class="btn">Créer une critique</a>
                     </div>
                     {% endif %}
+                    {% if ticket_and_review.date_edited %}
+                        <h4 class="date">Edited on {{ ticket_and_review.date_edited }}</h4>
+                    {% endif %}
                 </div>
             {% endif %}
         {% elif ticket_and_review|model_type == 'Review' %}
-            {% if ticket_and_review.author == user %}
+            {% if ticket_and_review.user == user %}
             <div class="review">
-                <h3>Vous avez publié une critique</h3>
+                <h3>{% get_user_display ticket_and_review.user %} publié une critique</h3>
                 <h4 class="date">{{ ticket_and_review.time_created }}</h4>
                 <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
                 <p>{{ ticket_and_review.body }}</p>
@@ -62,10 +68,20 @@
                         <img src="{{ ticket_and_review.ticket.image.url }}" alt="Ticket Image" />
                     {% endif %}
                 </div>
+                <div class="card-actions">
+                    <a href="{% url 'flux:edit_review' ticket_and_review.id %}" class="btn">Modifier</a>
+                    <form method="post" action="{% url 'flux:delete_review' ticket_and_review.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Supprimer</button>
+                    </form>
+                </div>
+                {% if ticket_and_review.time_edited %}
+                    <h4 class="date">Edited on {{ ticket_and_review.time_edited }}</h4>
+                {% endif %}
             </div>
             {% else %}
             <div class="review">
-                <h3>{{ ticket_and_review.user.username }} a publié une critique</h3>
+                <h3>{% get_user_display ticket_and_review.user %} publié une critique</h3>
                 <h4 class="date">{{ ticket_and_review.time_created }}</h4>
                 <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
                 <p>{{ ticket_and_review.body }}</p>
@@ -78,6 +94,9 @@
                         <img src="{{ ticket_and_review.ticket.image.url }}" alt="Ticket Image" />
                     {% endif %}
                 </div>
+                {% if ticket_and_review.time_edited %}
+                    <h4 class="date">Edited on {{ ticket_and_review.time_edited }}</h4>
+                {% endif %}
             </div>
             {% endif %}
         {% endif %}

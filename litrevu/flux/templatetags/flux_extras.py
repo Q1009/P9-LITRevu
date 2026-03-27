@@ -9,8 +9,8 @@ def model_type(value):
 @register.simple_tag(takes_context=True)
 def get_user_display(context, user):
     if context['user'] == user:
-        return 'vous'
-    return user.username
+        return 'Vous avez'
+    return f'{user.username} a'
 
 @register.filter
 def rating_stars(value):
