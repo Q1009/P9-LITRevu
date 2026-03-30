@@ -285,9 +285,25 @@ button[type="submit"].danger:hover {
     list-style: none;
 }
 
-p[style*="color: red"] {
-    color: #dc2626 !important;
+.form-error {
+    color: #dc2626;
     font-size: 0.875rem;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.file-name-label {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.current-image-preview {
+    display: block;
+    max-width: 200px;
+    margin-bottom: 0.5rem;
 }
 
 /* ── Subscriptions lists ─────────────────────────────── */
@@ -505,4 +521,84 @@ p.title {
     select {
         font-size: 1rem; /* évite le zoom auto sur iOS */
     }
+}
+
+/* ── Confirmation modal ──────────────────────────────── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: modal-fade-in 0.15s ease;
+}
+
+.modal-overlay.modal-visible {
+    display: flex;
+}
+
+@keyframes modal-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal-box {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem 2rem 1.5rem;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    animation: modal-slide-up 0.18s ease;
+}
+
+@keyframes modal-slide-up {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-message {
+    font-size: 1rem;
+    color: #1a1a2e;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modal-btn {
+    padding: 0.45rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.modal-btn--cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.modal-btn--cancel:hover {
+    background: #e5e7eb;
+}
+
+.modal-btn--delete {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.modal-btn--delete:hover {
+    background: #dc2626;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }

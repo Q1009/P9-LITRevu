@@ -4,7 +4,7 @@
     <h2>Modifier votre ticket</h2>
     {% if edit_form.errors %}
         {{ edit_form.errors }}
-        <p style="color: red;">Please correct the errors below.</p>
+        <p class="form-error">Please correct the errors below.</p>
     {% endif %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -13,11 +13,11 @@
                 <div>
                     <label>Image</label>
                     {% if field.value %}
-                        <img src="{{ field.value.url }}" alt="Image actuelle" style="display:block; max-width: 200px; margin-bottom: 0.5rem;" />
+                        <img src="{{ field.value.url }}" alt="Image actuelle" class="current-image-preview" />
                     {% endif %}
-                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept="image/*" style="display:none;">
+                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept="image/*" class="file-input-hidden">
                     <label for="{{ field.id_for_label }}" class="btn">Télécharger fichier</label>
-                    <span id="{{ field.id_for_label }}_name" style="margin-left: 0.5rem; font-size: 0.875rem; color: #6b7280;"></span>
+                    <span id="{{ field.id_for_label }}_name" class="file-name-label"></span>
                 </div>
             {% elif field.is_hidden %}
                 {{ field }}
@@ -35,14 +35,4 @@
             <button type="submit">Envoyer</button>
         </div>
     </form>
-    <script>
-        document.querySelectorAll('input[type="file"]').forEach(function(input) {
-            input.addEventListener('change', function() {
-                var nameSpan = document.getElementById(this.id + '_name');
-                if (nameSpan) {
-                    nameSpan.textContent = this.files.length > 0 ? this.files[0].name : '';
-                }
-            });
-        });
-    </script>
 {% endblock %}

@@ -18,13 +18,13 @@
                     <h3>{% get_user_display ticket_and_review.author %} demandé une critique</h3>
                     <h4 class="date">{{ ticket_and_review.date_created }}</h4>
                     <h3>{{ ticket_and_review.title }}</h3>
-                    <p>{{ ticket_and_review.description }}</p>
+                    <p>{{ ticket_and_review.description | safe }}</p>
                     {% if ticket_and_review.image %}
                         <img src="{{ ticket_and_review.image.url }}" alt="Ticket Image" />
                     {% endif %}
                     <div class="card-actions">
                         <a href="{% url 'flux:edit_ticket' ticket_and_review.id %}" class="btn">Modifier</a>
-                        <form method="post" action="{% url 'flux:delete_ticket' ticket_and_review.id %}">
+                        <form method="post" action="{% url 'flux:delete_ticket' ticket_and_review.id %}" class="delete-form">
                             {% csrf_token %}
                             <button type="submit" class="btn">Supprimer</button>
                         </form>
@@ -38,7 +38,7 @@
                     <h3>{% get_user_display ticket_and_review.author %} demandé une critique</h3>
                     <h4 class="date">{{ ticket_and_review.date_created }}</h4>
                     <h3>{{ ticket_and_review.title }}</h3>
-                    <p>{{ ticket_and_review.description }}</p>
+                    <p>{{ ticket_and_review.description | safe }}</p>
                     {% if ticket_and_review.image %}
                         <img src="{{ ticket_and_review.image.url }}" alt="Ticket Image" />
                     {% endif %}
@@ -58,19 +58,19 @@
                 <h3>{% get_user_display ticket_and_review.user %} publié une critique</h3>
                 <h4 class="date">{{ ticket_and_review.time_created }}</h4>
                 <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
-                <p>{{ ticket_and_review.body }}</p>
+                <p>{{ ticket_and_review.body | safe }}</p>
                 <div class="ticket_of_review">
                     <h3>Ticket - {{ticket_and_review.ticket.author.username}}</h3>
                     <h4 class="date">{{ ticket_and_review.ticket.date_created }}</h4>
                     <h3>{{ ticket_and_review.ticket.title }}</h3>
-                    <p>{{ ticket_and_review.ticket.description }}</p>
+                    <p>{{ ticket_and_review.ticket.description | safe }}</p>
                     {% if ticket_and_review.ticket.image %}
                         <img src="{{ ticket_and_review.ticket.image.url }}" alt="Ticket Image" />
                     {% endif %}
                 </div>
                 <div class="card-actions">
                     <a href="{% url 'flux:edit_review' ticket_and_review.id %}" class="btn">Modifier</a>
-                    <form method="post" action="{% url 'flux:delete_review' ticket_and_review.id %}">
+                    <form method="post" action="{% url 'flux:delete_review' ticket_and_review.id %}" class="delete-form">
                         {% csrf_token %}
                         <button type="submit" class="btn">Supprimer</button>
                     </form>
@@ -84,12 +84,12 @@
                 <h3>{% get_user_display ticket_and_review.user %} publié une critique</h3>
                 <h4 class="date">{{ ticket_and_review.time_created }}</h4>
                 <h3>{{ ticket_and_review.headline }} - {{ ticket_and_review.rating|rating_stars }}</h3>
-                <p>{{ ticket_and_review.body }}</p>
+                <p>{{ ticket_and_review.body | safe }}</p>
                 <div class="ticket_of_review">
                     <h3>Ticket - {{ticket_and_review.ticket.author.username}}</h3>
                     <h4 class="date">{{ ticket_and_review.ticket.date_created }}</h4>
                     <h3>{{ ticket_and_review.ticket.title }}</h3>
-                    <p>{{ ticket_and_review.ticket.description }}</p>
+                    <p>{{ ticket_and_review.ticket.description | safe }}</p>
                     {% if ticket_and_review.ticket.image %}
                         <img src="{{ ticket_and_review.ticket.image.url }}" alt="Ticket Image" />
                     {% endif %}
