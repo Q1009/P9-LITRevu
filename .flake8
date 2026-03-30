@@ -1,0 +1,13 @@
+[flake8]
+per-file-ignores =
+    litrevu/flux/apps.py: F401
+max-line-length = 90
+exclude =
+    migrations
+    __pycache__
+    manage.py
+    settings.py
+    env
+    .env
+    .venv
+    venv

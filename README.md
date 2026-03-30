@@ -69,6 +69,24 @@ The application is available at [http://localhost:8000/](http://localhost:8000/)
 
 ---
 
+## Linting
+
+The project uses **flake8** to check code style. Make sure the virtual environment is activated, then run the following command from the project root:
+
+```bash
+flake8 --format=html --htmldir=flake-report
+```
+
+This generates an HTML report in the `flake-report/` folder. Open `flake-report/index.html` in a browser to view the results.
+
+To run a quick check in the terminal without generating a report:
+
+```bash
+flake8
+```
+
+---
+
 ## Project structure
 
 ```
